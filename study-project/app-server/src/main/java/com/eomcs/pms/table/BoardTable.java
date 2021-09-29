@@ -25,14 +25,14 @@ public class BoardTable {
   }
 
   private void insert(Request request, Response response) throws Exception {
-    Board board = request.getValue(Board.class);
+    Board board = request.getObject(Board.class);
     list.add(board);
     response.setStatus(Response.SUCCESS);
   }
 
   @SuppressWarnings("unchecked")
   private void selectOne(Request request, Response response) throws Exception {
-    Map<String,String> params = request.getValue(Map.class);
+    Map<String,String> params = request.getObject(Map.class);
     int no = Integer.parseInt(params.get("no"));
     Board board = findByNo(no);
     if (board != null) {
