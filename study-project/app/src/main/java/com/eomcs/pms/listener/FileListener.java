@@ -14,8 +14,8 @@ import com.eomcs.context.ApplicationContextListener;
 import com.eomcs.pms.domain.Board;
 import com.eomcs.pms.domain.Member;
 import com.eomcs.pms.domain.Project;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 // 애플리케이션 데이터를 파일로 저장하거나 로딩하는 일을 한다.
 // => 애플리케이션의 상태가 시작 또는 종료일 때
