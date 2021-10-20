@@ -28,7 +28,7 @@
        Board    => board
        ...
    -->
-  <!-- selectList(sqlid, int) --> 
+  <!-- selectOne(sqlid, int) --> 
   <select id="select1" resultMap="BoardMap" parameterType="int">
     select 
       board_id, 
@@ -37,7 +37,7 @@
       created_date, 
       view_count  
     from x_board
-    where board_id=#{hoho}
+    where board_id=#{hoho} <!-- parameterType이 primitive, string, primitive wrapper라면 {} 이름 마음대로 -->
   </select>
   
   <!-- selectList(sqlid, string) --> 
@@ -49,7 +49,7 @@
       created_date, 
       view_count  
     from x_board
-    where title=#{value}
+    where title=#{okok}
   </select>
   
   <!-- selectList(sqlid, int) --> 
@@ -61,7 +61,7 @@
       created_date, 
       view_count  
     from x_board
-    where board_id &lt; #{no}
+    where board_id &lt; #{haha} <!-- 부등호는 태그의 시작이라고 생각해서 부등호 쓰지 x, but 아래방법 사용시 부등호 그대로 사용 가능 -->
   </select>
   
   <!-- selectList(sqlid, int) --> 

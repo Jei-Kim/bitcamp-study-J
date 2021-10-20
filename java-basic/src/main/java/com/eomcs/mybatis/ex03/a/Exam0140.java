@@ -17,7 +17,7 @@ public class Exam0140 {
     // - XML 파서(parser)에게 해당 블록의 내용물이 단순 텍스트임을 알려주는 명령이다.
     // - 문법
     //      <![CDATA[ 내용물 ]]>
-    // - 내용물 안에 XML 파서가 혼동을 일으킬 문자가 많을 때 사용하기 적합하다.
+    // - 내용물 안에 XML 파서가 혼동을 일으킬 문자가 많을 때 사용하기 적합하다.(ex.부등호)
     // 
     // 예) 특정 번호 미만의 게시글을 가져온다.
     List<Board> boards = sqlSession.selectList("BoardMapper.select4", 3);

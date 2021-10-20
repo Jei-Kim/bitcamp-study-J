@@ -1,32 +1,35 @@
 package com.eomcs.pms.handler;
 
-import java.sql.Date;
+import com.eomcs.pms.dao.TaskDao;
 import com.eomcs.pms.domain.Member;
 import com.eomcs.pms.domain.Project;
 import com.eomcs.pms.domain.Task;
-import com.eomcs.request.RequestAgent;
 import com.eomcs.util.Prompt;
 
 public class TaskUpdateHandler implements Command {
 
-  RequestAgent requestAgent;
+  TaskDao taskDao;
   ProjectPrompt projectPrompt;
 
-  public TaskUpdateHandler(RequestAgent requestAgent, ProjectPrompt projectPrompt) {
-    this.requestAgent = requestAgent;
-    this.projectPrompt = projectPrompt;
+  public TaskUpdateHandler(TaskDao taskDao) {
+    this.taskDao = taskDao;
   }
 
   @Override
   public void execute(CommandRequest request) throws Exception {
     System.out.println("[작업 변경]");
 
-    Task task = (Task) request.getAttribute("task");
     Project project = (Project) request.getAttribute("project");
 
-    String content = Prompt.inputString(String.format("내용(%s)? ", task.getContent()));
-    Date deadline = Prompt.inputDate(String.format("마감일(%s)? ", task.getDeadline()));
-    int status = TaskHandlerHelper.promptStatus(task.getStatus());
+    if (project.getOwner().getNo() != AuthLoginHandler.getLoginUser().getNo()) {
+      System.out.println("이 프로젝트의 관리자가 아닙니다.");
+      return;
+    }
+
+    Task task = (Task) request.getAttribute("task");
+    task.setContent(Prompt.inputString(String.format("내용(%s)? ", task.getContent())));
+    task.setDeadline(Prompt.inputDate(String.format("마감일(%s)? ", task.getDeadline())));
+    task.setStatus(new TaskHandlerHelper(taskDao).promptStatus(task.getStatus().getNo()));
 
     Member owner = MemberPrompt.promptMember(
         String.format("담당자(%s)?(취소: 빈 문자열) ", task.getOwner().getName()), 
@@ -42,18 +45,9 @@ public class TaskUpdateHandler implements Command {
       return;
     }
 
-    task.setContent(content);
-    task.setDeadline(deadline);
-    task.setStatus(status);
-    task.setOwner(owner);
+    taskDao.update(task);
 
-    requestAgent.request("project.task.update", task);
-
-    if (requestAgent.getStatus().equals(RequestAgent.SUCCESS)) {
-      System.out.println("작업를 변경하였습니다.");
-    } else {
-      System.out.println("작업 변경 실패!");
-    }
+    System.out.println("작업를 변경하였습니다.");
   }
 }
 

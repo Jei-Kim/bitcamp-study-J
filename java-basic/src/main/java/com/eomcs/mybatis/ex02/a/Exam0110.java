@@ -16,7 +16,7 @@ public class Exam0110 {
     // SqlSession 객체를 이용하여 SQL 맵퍼 파일에 작성한 SQL 문을 실행하는 방법
     // => select 문장 
     //    - sqlSession.selectList() : 목록 리턴
-    //    - sqlSession.selectOne() : 한 개의 결과 리턴
+    //    - sqlSession.selectOne() : 한 개의 결과 리턴 // 한 개 이상일 경우 하나만 리턴하는 게 아니라 걍 에러 뜸
     // => insert 문장
     //    - sqlSession.insert() 
     // => update 문장

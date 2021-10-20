@@ -66,7 +66,8 @@ public class Exam0110 {
     // openSession(boolean autoCommit) 메서드를 호출하라.
     //
     SqlSession sqlSession = factory.openSession();
-
+    // SqlSession sqlSession = new SqlSession(); 이라고 안 하는 이유?
+    // 생성이 복잡하니까 factory method 활용하는 것.(openSession메서드 통해서 만들어주는 것)
     System.out.println("mybatis 사용 준비 완료!");
 
     sqlSession.close();

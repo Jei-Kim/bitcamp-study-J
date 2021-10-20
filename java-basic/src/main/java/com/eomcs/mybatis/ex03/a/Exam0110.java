@@ -23,9 +23,9 @@ public class Exam0110 {
     //    도메인 객체나 Map 객체에 담아 전달하라!
 
     // 예) 특정 번호의 게시글을 가져온다.
-    List<Board> boards = sqlSession.selectList("BoardMapper.select1", 5); // auto-boxing 수행
+    Board board = sqlSession.selectOne("BoardMapper.select1", 5); // auto-boxing 수행
 
-    for (Board b : boards) {
+    if (board != null) {
       System.out.printf("%d,%s,%s,%s,%d\n",
           b.getNo(),
           b.getTitle(),
