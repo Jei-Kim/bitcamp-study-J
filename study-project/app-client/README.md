@@ -1,119 +1,107 @@
-# 19-d. 데이터 관리 서버 만들기 : 프로토콜 정의 및 적용
-
+# 22-a. DB 프로그래밍을 더 쉽고 간단히 하는 방법 : Mybatis 퍼시스턴스 프레임워크 도입
 
 이번 훈련에서는,
-- **네트워크 API** 를 이용하여 데스크톱 애플리케이션을 클라이언트/서버 구조로 변경한다.
+- 실무에서 자주 쓰이는 *퍼시스턴스 프레임워크* 중에 하나인 **마이바티스** 프레임워크의 사용법을 배울 것이다.
 
-데스크톱(desktop) 애플리케이션은,
-- 다른 애플리케이션과 연동하지 않고 단독적으로 실행한다.
-- 보통 PC나 노트북에 설치해서 사용한다.
-- 예) MS-Word, Adobe Photoshop, 메모장 등
+**퍼시스턴스 프레임워크(Persistence Framework)** 는,
+- 데이터의 저장, 조회, 변경, 삭제를 다루는 클래스 및 설정 파일들의 집합이다.(위키백과)
+- JDBC 프로그래밍의 번거로움 없이 간결하게 데이터베이스와 연동할 수 있다.
+- 소스 코드에서 SQL 문을 분리하여 관리한다.
 
-클라이언트(Client)/서버(Server) 애플리케이션은,
-- 줄여서 C/S 애플리케이션이라 부른다.
-- 클라이언트는 서버에게 서비스나 자원을 요청하는 일을 한다.
-- 서버는 클라이언트에게 자원이나 서비스를 제공하는 일을 한다.
-
+**마이바티스(Mybatis)** 는,
+- *퍼시스턴스 프레임워크* 중의 하나이다.
+- JDBC 프로그래밍을 캡슐화하여 데이터베이스 연동을 쉽게 하도록 도와준다.
+- 자바 소스 파일에서 SQL을 분리하여 별도의 파일로 관리하기 때문에
+  자바 소스 코드를 간결하게 유지할 수 있다.
+- JDBC 프로그래밍 할 때와 마찬가지로 직접 SQL을 다루기 때문에
+  레거시(legacy) 시스템에서 사용하는 데이터베이스와 연동할 때 유리하다.
+- SQL을 통해 데이터베이스와 연동한다고 해서 보통 **SQL 매퍼(mapper)** 라 부른다.
 
 ## 훈련 목표
-- 통신 프로토콜을 이해한다.
-- `extract method` 리팩토링 기법을 연습한다.
+- **Mybatis SQL 맵퍼** 의 특징과 동작 원리를 이해한다.
+- Mybatis 퍼시스턴스 프레임워크를 설정하고 다루는 방법을 배운다.
 
 ## 훈련 내용
-- 응답 프로토콜을 변경하고 그에 맞게 구현한다.
-- 응답을 수신하는 코드를 별도의 메서드로 분리한다.
-
-### 요청 프로토콜
-
-```
-요청 데이터 규칙: 
-명령(UTF-8 문자열) CRLF
-JSON 데이터(UTF-8 문자열) CRLF  <== 명령어에 따라 선택 사항
-
-예) 게시글 목록 요청
-/board/list CRLF
-
-예) 게시글 상세 요청
-/board/detail CRLF
-{"no": 1} CRLF
-
-예) 게시글 등록 요청
-/board/add CRLF
-{
-    "title": "제목", 
-    "content": "내용", 
-    "writer": {
-        "no": 1, "name": "홍길동"
-    }
-} CRLF
-
-예) 게시글 변경 요청
-board/update CRLF
-{
-    "no": 1
-    "title": "제목", 
-    "content": "내용"
-} CRLF
-
-예) 게시글 삭제 요청
-/board/delete CRLF
-{"no": 1} CRLF
-```
-
-### 응답 프로토콜
-
-```
-응답 데이터 규칙: 
-처리상태(success | fail) CRLF
-JSON 데이터(UTF-8 문자열) CRLF  <== 처리 결과에 따라 선택 사항
-
-
-예) /board/list 요청에 대한 응답
-success CRLF
-게시글 목록에 대한 JSON 데이터 CRLF
-
-
-예) board/detail 요청에 대한 응답
-success CRLF
-{
-    "no": 1
-    "title": "제목", 
-    "content": "내용", 
-    "writer": {
-        "no": 1, "name": "홍길동"
-    },
-    "registeredDate": "2021-01-01",
-    "viewCount": 11,
-    "like": 5
-} CRLF
-
-예) board/add 요청에 대한 응답
-success CRLF
-
-예) board/update 요청에 대한 응답
-success CRLF
-
-예) board/delete 요청에 대한 응답
-success CRLF
-```
+- *Mybatis 프레임워크* 라이브러리 파일을 프로젝트에 추가한다.
+- *Mybatis* 를 설정한다.
+- *DAO* 에 *Mybatis* 를 적용한다.
 
 ## 실습
 
-### 1단계 - 프로토콜에 맞춰 게시글 데이터의 저장을 요청한다.
+### 1단계 - 프로젝트에 MyBatis 라이브러리를 추가한다.
 
-- com.eomcs.pms.domain.Member 클래스 가져오기
-- com.eomcs.pms.domain.Board 클래스 가져오기
-- `com.eomcs.pms.ClientApp` 변경
-    - `addBoard()` 메서드 추가 
-        - 프로토콜에 맞춰 Board 객체를 JSON 데이터로 바꿔 서버에 보내기
-        - 서버의 응답 결과를 출력하기
+- build.gradle   
+  - `search.maven.org` 사이트에서 *mybatis* 라이브러리 정보를 찾는다.
+  - 의존 라이브러리 블록에서 `mybatis` 라이브러리를 등록한다.
+- gradle을 이용하여 eclipse 설정 파일을 갱신한다.
+  - `$ gradle eclipse`
+- 이클립스에서 프로젝트를 갱신한다.
 
-### 2단계 - 프로토콜에 맞춰 게시글 데이터의 조회를 요청한다.
+### 2단계 - `MyBatis` 설정 파일을 준비한다.
 
-- `com.eomcs.pms.ClientApp` 변경
-    - `detailBoard()` 메서드 추가
-        - 프로토콜에 맞춰 Board 객체를 요구하기
-        - 서버에서 보내온 JSON 데이터로 Board 객체로 바꿔 출력하기
+- src/main/resources/com/eomcs/pms/conf/jdbc.properties
+  - 마이바티스 홈 : <http://www.mybatis.org>
+  - `MyBatis` 설정 파일에서 참고할 DBMS 접속 정보를 등록한다.
+- src/main/resources/com/eomcs/pms/conf/mybatis-config.xml
+  - `MyBatis` 설정 파일이다.
+  - DBMS 서버의 접속 정보를 갖고 있는 jdbc.properties 파일의 경로를 등록한다.
+  - DBMS 서버 정보를 설정한다.
+  - DB 커넥션 풀을 설정한다.
 
-## 실습 결과
-- src/main/java/com/eomcs/pms/ClientApp.java 변경
+
+### 3단계: Mybatis를 적용한 MybatisMemberDao 만들어 기존 DAO를 대체한다.
+
+- com/eomcs/pms/conf/mybatis-config.xml 변경
+  - MemberMapper.xml 파일의 경로를 등록한다.
+- com/eomcs/pms/mapper/MemberMapper.xml 추가
+  - MariadbMemberDao 에 있던 SQL문을 이 파일로 옮긴다.
+- com.eomcs.pms.dao.impl.MybatisMemberDao 클래스 생성.
+  - 의존 객체 SqlSession을 생성자를 통해 주입 받는다.
+  - SQL을 뜯어내어 MemberMapper.xml로 옮긴다.
+  - JDBC 코드를 뜯어내고 그 자리에 Mybatis 클래스로 대체한다.
+- com.eomcs.pms.ClientApp 클래스 변경
+  - SqlSession 객체를 준비한다.
+  - MybatisMemberDao 객체에 주입한다.
+
+### 4단계: Mybatis를 적용한 MybatisBoardDao 만들어 기존 DAO를 대체한다.
+
+- com/eomcs/pms/conf/mybatis-config.xml 변경
+  - BoardMapper.xml 파일의 경로를 등록한다.
+- com/eomcs/pms/mapper/BoardMapper.xml 추가
+  - MariadbBoardDao 에 있던 SQL문을 이 파일로 옮긴다.
+- com.eomcs.pms.dao.impl.MybatisBoardDao 클래스 생성.
+  - 의존 객체 SqlSession을 생성자를 통해 주입 받는다.
+  - SQL을 뜯어내어 BoardMapper.xml로 옮긴다.
+  - JDBC 코드를 뜯어내고 그 자리에 Mybatis 클래스로 대체한다.
+- com.eomcs.pms.ClientApp 클래스 변경
+  - SqlSession 객체를 준비한다.
+  - MybatisBoardDao 객체에 주입한다.
+
+### 5단계: Mybatis를 적용한 MybatisProjectDao 만들어 기존 DAO를 대체한다.
+
+- com/eomcs/pms/conf/mybatis-config.xml 변경
+  - ProjectMapper.xml 파일의 경로를 등록한다.
+- com/eomcs/pms/mapper/ProjectMapper.xml 추가
+  - MariadbProjectDao 에 있던 SQL문을 이 파일로 옮긴다.
+- com.eomcs.pms.dao.impl.MybatisProjectDao 클래스 생성.
+  - 의존 객체 SqlSession을 생성자를 통해 주입 받는다.
+  - SQL을 뜯어내어 ProjectMapper.xml로 옮긴다.
+  - JDBC 코드를 뜯어내고 그 자리에 Mybatis 클래스로 대체한다.
+- com.eomcs.pms.ClientApp 클래스 변경
+  - SqlSession 객체를 준비한다.
+  - MybatisProjectDao 객체에 주입한다.
+
+### 6단계: Mybatis를 적용한 MybatisTaskDao 만들어 기존 DAO를 대체한다.
+
+- com/eomcs/pms/conf/mybatis-config.xml 변경
+  - TaskMapper.xml 파일의 경로를 등록한다.
+- com/eomcs/pms/mapper/TaskMapper.xml 추가
+  - MariadbTaskDao 에 있던 SQL문을 이 파일로 옮긴다.
+- com.eomcs.pms.dao.impl.MybatisTaskDao 클래스 생성.
+  - 의존 객체 SqlSession을 생성자를 통해 주입 받는다.
+  - SQL을 뜯어내어 TaskMapper.xml로 옮긴다.
+  - JDBC 코드를 뜯어내고 그 자리에 Mybatis 클래스로 대체한다.
+- com.eomcs.pms.ClientApp 클래스 변경
+  - SqlSession 객체를 준비한다.
+  - MybatisTaskDao 객체에 주입한다.
+
