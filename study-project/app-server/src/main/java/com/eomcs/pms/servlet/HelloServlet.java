@@ -14,7 +14,6 @@ public class HelloServlet implements Servlet {
 
   @Override
   public void init(ServletConfig config) throws ServletException {
-
   }
 
   @Override
@@ -38,7 +37,6 @@ public class HelloServlet implements Servlet {
 
   @Override
   public void destroy() {
-
   }
 
 }
