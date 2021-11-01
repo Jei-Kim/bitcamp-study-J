@@ -17,6 +17,21 @@ values(5, 'eee', 'eee@test.com', password('1111'), 5);
 insert into member(member_no, name, email, password, phone_number)
 values(6, 'fff', 'fff@test.com', password('1111'), 6);
 
+-- 스터디 입력
+insert into 
+    study(title,content,area,max_member,start_date,end_date,price,member_no)
+    values('title1','content1','area1','3','2021-11-20','2021-11-30','70000','1');
+
+insert into 
+    study(title,content,area,max_member,start_date,end_date,price,member_no)
+    values('title2','content2','area2','3','2021-11-20','2021-11-30','70000','2') ;
+
+insert into 
+    study(title,content,area,max_member,start_date,end_date,price,member_no)
+    values('title3','content1','area3','3','2021-11-20','2021-11-30','70000','3') ;
+
+
+
 -- 아래는 아직 안 넣음 
 
 -- 게시글 입력
