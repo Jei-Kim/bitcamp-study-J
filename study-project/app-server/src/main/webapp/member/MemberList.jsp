@@ -6,11 +6,24 @@
 <html>
 <head>
   <title>회원목록</title>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+    
+    <script src="../node_modules/@popperjs/core/dist/umd/popper.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.js"></script>
+
+	<style>
+	.container{
+	xborder: 1px solid red;
+	width: 640px
+	}
+	</style>
+
 </head>
 <body>
-<h1>회원 목록(MVC + EL + JSTL)</h1>
-<a href='form'>새회원</a><br>
-<table border='1'>
+<div class="container">
+<h1>회원 목록(MVC + EL + JSTL+ BS)</h1>
+<a href='form' class="button">새회원</a><br>
+<table class="table">
 <thead>
   <tr>
     <th>번호</th>
@@ -21,7 +34,6 @@
   </tr>
 </thead>
 <tbody>
-
 <c:forEach items="${memberList}" var="member">
 <tr>
     <td>${member.no}</td>
@@ -34,6 +46,7 @@
 
 </tbody>
 </table>
+</div><!-- .container -->
 </body>
 </html>
 

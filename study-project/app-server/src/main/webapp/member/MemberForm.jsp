@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<div class="container">
   <title>새회원</title>
   <style>
   label {
@@ -24,6 +25,8 @@
 <label for='f-tel'>전화</label> <input id='f-tel' type='tel' name='tel'><br>
 <button>등록</button><br>
 </form>
+</div> 
+</head>
 </body>
 </html>
 
