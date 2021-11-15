@@ -1,40 +1,30 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<header>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled">Disabled</a>
-        </li>
-      </ul>
-      <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
-    </div>
-  </div>
-</nav>
-</header>
+<style>
+  #menubar {
+    background-color:gray;
+    color:white;
+    height: 30px;
+    padding: 5px;
+  }
+  #menubar a {
+    color:white; 
+    text-decoration: none;
+  }
+  #menubar a:visited {
+    color:white; 
+  }
+  #menubar a:hover {
+    text-decoration: underline;
+  }
+</style>
+<%
+String contextPath = request.getServletContext().getContextPath();
+%>
+<div id='menubar'>
+  <a href='<%=contextPath%>/board/list'>게시글</a>
+  <a href='<%=contextPath%>/member/list'>회원</a>
+  <a href='<%=contextPath%>/project/list'>프로젝트</a>
+  <a href='<%=contextPath%>/auth/login'>로그인</a>
+  <a href='<%=contextPath%>/auth/logout'>로그아웃</a>
+</div>
